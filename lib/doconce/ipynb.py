@@ -502,7 +502,7 @@ def ipynb_code(filestr, code_blocks, code_block_types,
             idx = int(m.group(1))
             if ipynb_code_tp[idx] == 'cell':
                 notebook_blocks[i] = ['cell', notebook_blocks[i]]
-            if ipynb_code_tp[idx] == 'cell_uneditable':
+            elif ipynb_code_tp[idx] == 'cell_uneditable':
                 notebook_blocks[i] = ['cell_uneditable', notebook_blocks[i]]
             elif ipynb_code_tp[idx] == 'cell_hidden':
                 notebook_blocks[i] = ['cell_hidden', notebook_blocks[i]]
