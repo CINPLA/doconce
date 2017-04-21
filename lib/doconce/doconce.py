@@ -4445,7 +4445,7 @@ def doconce2format(filestr, format):
         if 'FIGURE:' in filestr and option('ipynb_figure=', 'md') == 'Image':
             call_handle_figures = True
         if option('figure_prefix=') is not None or \
-           option ('movie_prefix=') is not None:
+           option('movie_prefix=') is not None:
             call_handle_figures = True
         if call_handle_figures:
             filestr = handle_figures(filestr, format)
