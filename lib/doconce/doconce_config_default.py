@@ -122,6 +122,7 @@ latex_double_hyphen = False
 #ipynb_admon = 
 #ipynb_figure = 
 #ipynb_movie = 
+ipynb_non_editable_text = False
 verbose = False
 examples_as_exercises = False
 exercises_as_subsections = False
