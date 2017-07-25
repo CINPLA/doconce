@@ -2,6 +2,8 @@ from __future__ import print_function
 from __future__ import division
 from __future__ import unicode_literals
 
+import os
+
 from jupyter_client import KernelManager
 from nbformat.v4 import output_from_msg
 from . import misc
@@ -89,7 +91,7 @@ def run_cell(kernel_client, source, timeout=120):
             continue
         elif msg_type.startswith('comm'):
             continue
-        
+
         display_id = None
         if msg_type in {'execute_result', 'display_data', 'update_display_data'}:
             display_id = msg['content'].get('transient', {}).get('display_id', None)
@@ -112,5 +114,8 @@ def run_cell(kernel_client, source, timeout=120):
             # output_idx_list.append(len(outs))
 
         outs.append(out)
+
+        if misc.option('verbose-execute'):
+            print("executing cell: \n {}\n in {} \n result: \n {} \n".format(source, os.getcwd(), out))
 
     return outs, execution_count
