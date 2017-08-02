@@ -638,12 +638,12 @@ def ipynb_code(filestr, code_blocks, code_block_types,
                     if nb_version == 3:
                         nb.cells.append(new_code_cell(
                             input=block_,
-                            prompt_number=prompt_number,
+                            # prompt_number=prompt_number,
                             collapsed=False))
                     elif nb_version == 4:
                         cell = new_code_cell(
                             source=block_,
-                            execution_count=prompt_number,
+                            # execution_count=prompt_number,
                             metadata=dict(collapsed=False)
                         )
                         cells.append(cell)
