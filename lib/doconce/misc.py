@@ -502,6 +502,8 @@ that is used in the DocOnce HTML format
 ipynb: python cell with notebook `HTML` object with simple/standard
 ipynb HTML code for showing a YouTube or local video with a <video>
 tag."""),
+    ('--ipynb_non_editable_text',
+     "All text in a notebook is set to be uneditable. Code blocks are unchanged"),
     ('--verbose',
      'Write out all OS commands run by doconce.'),
     ('--examples_as_exercises',

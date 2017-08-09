@@ -380,6 +380,11 @@ def ipynb_code(filestr, code_blocks, code_block_types,
                              indent_lines(code_blocks[i].strip(), format) + \
                              "```"
             ipynb_code_tp[i] = 'markdown'
+        elif tp.endswith('-u'):
+            # Standard Markdown code with pandoc/github extension
+            language = tp[:-2]
+            language_spec = language2pandoc.get(language, '')
+            ipynb_code_tp[i] = 'cell_uneditable'
         elif tp.startswith('pyshell') or tp.startswith('ipy'):
             lines = code_blocks[i].splitlines()
             last_cell_end = -1
@@ -506,6 +511,8 @@ def ipynb_code(filestr, code_blocks, code_block_types,
             idx = int(m.group(1))
             if ipynb_code_tp[idx] == 'cell':
                 notebook_blocks[i] = ['cell', notebook_blocks[i]]
+            elif ipynb_code_tp[idx] == 'cell_uneditable':
+                notebook_blocks[i] = ['cell_uneditable', notebook_blocks[i]]
             elif ipynb_code_tp[idx] == 'execute_hidden':
                 notebook_blocks[i] = ['execute_hidden', notebook_blocks[i]]
             elif ipynb_code_tp[idx] == 'cell_hidden':
@@ -622,7 +629,10 @@ def ipynb_code(filestr, code_blocks, code_block_types,
             if nb_version == 3:
                 nb.cells.append(new_text_cell(u'markdown', source=block))
             elif nb_version == 4:
-                cells.append(new_markdown_cell(source=block))
+                if option('ipynb_non_editable_text'):
+                    cells.append(new_markdown_cell(source=block, metadata=dict(editable=False)))
+                else:
+                    cells.append(new_markdown_cell(source=block))
             mdstr.append(('markdown', block))
         elif block_tp == "execute_hidden" and option("execute"):
             if not isinstance(block, list):
@@ -694,6 +704,18 @@ def ipynb_code(filestr, code_blocks, code_block_types,
                     source=block,
                     execution_count=prompt_number,
                     metadata=dict(collapsed=True)))
+            prompt_number += 1
+            mdstr.append(('codecell', block))
+
+        elif block_tp == 'cell_uneditable' and block != '':
+            block = block.rstrip()
+            if nb_version == 3:
+                print("WARNING: uneditable code cells not implemented for nbformat v3.")
+            elif nb_version == 4:
+                cells.append(new_code_cell(
+                    source=block,
+                    execution_count=prompt_number,
+                    metadata=dict(collapsed=True, editable=False)))
             prompt_number += 1
             mdstr.append(('codecell', block))
 
