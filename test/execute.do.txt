@@ -112,3 +112,11 @@ You may want to use `os.chdir` to change the directory.
 with open("../LICENSE") as f:
     print(f.read())
 !ec
+
+======= Help functions =======
+
+We can also print the output of a help call:
+
+!bc pycod
+float?
+!ec
