@@ -1137,7 +1137,7 @@ def latex_code(filestr, code_blocks, code_block_types,
                         )
                         if "text" in output:
                             text_output = ansi_escape.sub("", output["text"])
-                            lines[i] += "{}\n{}\n{}\n".format(
+                            lines[i] += "\n{}\n{}{}".format(
                                 begin,
                                 text_output,
                                 end
@@ -1179,7 +1179,7 @@ def latex_code(filestr, code_blocks, code_block_types,
                                 ).format(filename_stem=filename_stem, caption_and_label=caption_and_label)
                             elif "text/plain" in data:  # add text only if no image
                                 text_output = ansi_escape.sub("", output["data"]["text/plain"])
-                                lines[i] += "{}\n{}\n{}\n".format(
+                                lines[i] += "\n{}\n{}{}".format(
                                     begin,
                                     text_output,
                                     end
@@ -1188,7 +1188,7 @@ def latex_code(filestr, code_blocks, code_block_types,
                             # TODO: convert ANSI escape chars to colors
                             traceback = "\n".join(output["traceback"])
                             traceback = ansi_escape.sub("", traceback)
-                            lines[i] += "{}\n{}\n{}\n".format(
+                            lines[i] += "\n{}\n{}{}".format(
                                 begin,
                                 traceback,
                                 end

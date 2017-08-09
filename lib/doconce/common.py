@@ -231,12 +231,12 @@ def get_copyfile_info(filestr=None, copyright_filename=None, format=None):
 def fix_ref_section_chapter(filestr, format):
     # .... see section ref{my:sec} is replaced by
     # see the section "...section heading..."
-    pattern = r'[Ss]ection(s?)\s+ref\{'
-    replacement = r'the section\g<1> ref{'
-    filestr = re.sub(pattern, replacement, filestr)
-    pattern = r'[Cc]hapter(s?)\s+ref\{'
-    replacement = r'the chapter\g<1> ref{'
-    filestr = re.sub(pattern, replacement, filestr)
+    # pattern = r'[Ss]ection(s?)\s+ref\{'
+    # replacement = r'the section\g<1> ref{'
+    # filestr = re.sub(pattern, replacement, filestr)
+    # pattern = r'[Cc]hapter(s?)\s+ref\{'
+    # replacement = r'the chapter\g<1> ref{'
+    # filestr = re.sub(pattern, replacement, filestr)
     # Do not use "the appendix" since the headings in appendices
     # have "Appendix: title"
     pattern = r'[Aa]ppendix\s+ref\{'
