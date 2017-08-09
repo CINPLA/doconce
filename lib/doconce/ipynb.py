@@ -911,6 +911,7 @@ def ipynb_ref_and_label(section_label2title, format, filestr):
     pattern = r'([Ff]igure|[Mm]ovie)\s+ref\{(.+?)\}'
     for m in re.finditer(pattern, filestr):
         label = m.group(2).strip()
+        print(figure_labels)
         figure_number = figure_labels[label]
         replace_pattern = r'([Ff]igure|[Mm]ovie)\s+ref\{' + label + r'\}'
         replace_string = '[\g<1> {figure_number}](#{label})'.format(
