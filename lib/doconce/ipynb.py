@@ -638,12 +638,12 @@ def ipynb_code(filestr, code_blocks, code_block_types,
                     if nb_version == 3:
                         nb.cells.append(new_code_cell(
                             input=block_,
-                            prompt_number=prompt_number,
+                            # prompt_number=prompt_number,
                             collapsed=False))
                     elif nb_version == 4:
                         cell = new_code_cell(
                             source=block_,
-                            execution_count=prompt_number,
+                            # execution_count=prompt_number,
                             metadata=dict(collapsed=False)
                         )
                         cells.append(cell)
@@ -911,14 +911,16 @@ def ipynb_ref_and_label(section_label2title, format, filestr):
     pattern = r'([Ff]igure|[Mm]ovie)\s+ref\{(.+?)\}'
     for m in re.finditer(pattern, filestr):
         label = m.group(2).strip()
-        print(figure_labels)
-        figure_number = figure_labels[label]
-        replace_pattern = r'([Ff]igure|[Mm]ovie)\s+ref\{' + label + r'\}'
-        replace_string = '[\g<1> {figure_number}](#{label})'.format(
+        try:
+            figure_number = figure_labels[label]
+            replace_pattern = r'([Ff]igure|[Mm]ovie)\s+ref\{' + label + r'\}'
+            replace_string = '[\g<1> {figure_number}](#{label})'.format(
             figure_number=figure_number,
             label=label
-        )
-        filestr = re.sub(replace_pattern, replace_string, filestr)
+            )
+            filestr = re.sub(replace_pattern, replace_string, filestr)
+        except KeyError:
+            errwarn("*** warning: Missing figure label '{}'".format(label))
 
     # Remaining ref{} (should protect \eqref)
     filestr = re.sub(r'ref\{(.+?)\}', '[\g<1>](#\g<1>)', filestr)
