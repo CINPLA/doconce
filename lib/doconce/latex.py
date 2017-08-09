@@ -18,7 +18,6 @@ from .common import plain_exercise, table_analysis, \
 from .misc import option, _abort, replace_code_command
 from .doconce import errwarn, debugpr, locale_dict
 import base64
-from . import execution
 import uuid
 import os
 additional_packages = ''  # comma-sep. list of packages for \usepackage{}
@@ -443,7 +442,8 @@ identifierstyle=\color{darkblue},
 
 def latex_code(filestr, code_blocks, code_block_types,
                tex_blocks, format):
-
+    if option("execute"):
+        from . import execution
     if option('latex_double_hyphen'):
         errwarn('*** warning: --latex_double_hyphen may lead to unwanted edits.')
         errwarn('             search for all -- in the .p.tex file and check.')
