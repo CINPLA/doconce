@@ -544,7 +544,7 @@ def latex_code(filestr, code_blocks, code_block_types,
             admon_envir_mapping = dict([pair.split('-') for pair in code_envir_transform.split(',')])
     lines = filestr.splitlines()
     inside_admon = False
-    admons = 'notice', 'summary', 'warning', 'question', 'block', 'assumption'
+    admons = 'notice', 'summary', 'warning', 'question', 'block'
     for i in range(len(lines)):
         for admon in admons:
             if lines[i].startswith('!b' + admon):
@@ -645,7 +645,7 @@ def latex_code(filestr, code_blocks, code_block_types,
         # to be block envirs.)
 
         # Generate admon automatically name by name
-        admons = 'notice', 'summary', 'warning', 'question', 'block', 'assumption'
+        admons = 'notice', 'summary', 'warning', 'question', 'block'
         #Admons = [admon[0].upper() + admon[1:] for admon in admons]
         for admon in admons:
             # First admons without title
@@ -2462,13 +2462,13 @@ def get_admon_figname(admon_tp, admon_name):
         else:
             return None
     else:
-        if admon_name in ('notice', 'warning', 'summary', 'question', 'assumption'):
+        if admon_name in ('notice', 'warning', 'summary', 'question'):
             return admon_name
         else:
             return None
 
 # Generate Python functions for admons
-admons = 'notice', 'summary', 'warning', 'question', 'block', 'assumption'
+admons = 'notice', 'summary', 'warning', 'question', 'block'
 for _admon in admons:
     _Admon = locale_dict[locale_dict['language']].get(_admon, _admon).capitalize()
     _title_period = '' if option('latex_admon_title_no_period') else '.'
@@ -2628,8 +2628,8 @@ def latex_%s(block, format, title='%s'):
 \\begin{center}
 \\fcolorbox{black}{%sbackground}{
 \\begin{minipage}{0.8\\textwidth}
-\includegraphics[height=0.6in]{%s/%s%%s}
-\ \ \ {\large\sc %%s}\\\\ [6mm]
+\includegraphics[height=0.3in]{%s/%s%%s}
+\ \ \ {\large\sc %%s}\\\\ [3mm]
 %%s
 \end{minipage}}
 \end{center}
@@ -2921,7 +2921,6 @@ def define(FILENAME_EXTENSION,
         'summary':       latex_summary,
         'block':         latex_block,
         'box':           latex_box,
-        'assumption':    latex_assumption,
        }
 
     ending = '\n'
@@ -3884,7 +3883,7 @@ justified,
         # Named admon color? Set corresponding values
         if latex_admon_color == 'colors1':
            multiple_colors = True
-           latex_admon_color = 'warning:red1;notice:blue1;question:orange1;summary:green1;block:yellow1;assumption:green1'
+           latex_admon_color = 'warning:red1;notice:blue1;question:orange1;summary:green1;block:yellow1'
         if multiple_colors:
             # Syntax: --latex_admon_color=warning:(r,g,b);question:blue1
             latex_admon_colors = [c.split(':') for c in
@@ -3935,7 +3934,6 @@ justified,
                     warning=pink,
                     question=yellow1,
                     notice=yellow1,
-                    assumption=yellow1,
                     summary=yellow1,
                     #block=_gray2,
                     block=yellow1,
@@ -4142,11 +4140,7 @@ justified,
 \newenvironment{%(admon)s_colors2admon}[1][%(Admon)s]{
 \begin{%(admon)sshaded}
 \noindent
-%(graphics_colors2)s
-\vspace{12pt}
-\noindent
-\textbf{#1}\par
-\vspace{8pt}
+%(graphics_colors2)s \textbf{#1}\par
 \nobreak\noindent\ignorespaces
 }
 {

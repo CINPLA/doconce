@@ -223,7 +223,7 @@ def doconce_envirs():                     # begin-end environments
             'pop', 'slidecell', 'notes',  # slides
             'hint', 'remarks',            # exercises
             'quote', 'box',
-            'notice', 'summary', 'warning', 'question', 'block', 'assumption', # admon
+            'notice', 'summary', 'warning', 'question', 'block', # admon
             'quiz', 'u-',
             ]
 
