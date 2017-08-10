@@ -4080,11 +4080,11 @@ justified,
             Admon = admon.upper()[0] + admon[1:]
 
             # Figure files are copied when necessary
+            graphics_colors1 = r'\includegraphics[height=0.52in]{latex_figs/%s}\ \ \ ' % get_admon_figname('colors1', admon)
 
             graphics_colors2 = r"""\begin{wrapfigure}{l}{0.07\textwidth}
 \vspace{-13pt}
 \includegraphics[width=0.07\textwidth]{latex_figs/%s}
-            graphics_colors1 = r'\includegraphics[height=0.52in]{latex_figs/%s}\ \ \ ' % get_admon_figname('colors1', admon)
 \end{wrapfigure}""" % get_admon_figname('colors2', admon)
 
             graphics_grayicon = r"""\begin{wrapfigure}{l}{0.07\textwidth}
