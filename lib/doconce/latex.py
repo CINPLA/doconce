@@ -18,7 +18,6 @@ from .common import plain_exercise, table_analysis, \
 from .misc import option, _abort, replace_code_command
 from .doconce import errwarn, debugpr, locale_dict
 import base64
-from . import execution
 import uuid
 import os
 additional_packages = ''  # comma-sep. list of packages for \usepackage{}
@@ -443,7 +442,8 @@ identifierstyle=\color{darkblue},
 
 def latex_code(filestr, code_blocks, code_block_types,
                tex_blocks, format):
-
+    if option("execute"):
+        from . import execution
     if option('latex_double_hyphen'):
         errwarn('*** warning: --latex_double_hyphen may lead to unwanted edits.')
         errwarn('             search for all -- in the .p.tex file and check.')
@@ -1137,7 +1137,7 @@ def latex_code(filestr, code_blocks, code_block_types,
                         )
                         if "text" in output:
                             text_output = ansi_escape.sub("", output["text"])
-                            lines[i] += "{}\n{}\n{}\n".format(
+                            lines[i] += "\n{}\n{}{}".format(
                                 begin,
                                 text_output,
                                 end
@@ -1179,7 +1179,7 @@ def latex_code(filestr, code_blocks, code_block_types,
                                 ).format(filename_stem=filename_stem, caption_and_label=caption_and_label)
                             elif "text/plain" in data:  # add text only if no image
                                 text_output = ansi_escape.sub("", output["data"]["text/plain"])
-                                lines[i] += "{}\n{}\n{}\n".format(
+                                lines[i] += "\n{}\n{}{}".format(
                                     begin,
                                     text_output,
                                     end
@@ -1188,7 +1188,7 @@ def latex_code(filestr, code_blocks, code_block_types,
                             # TODO: convert ANSI escape chars to colors
                             traceback = "\n".join(output["traceback"])
                             traceback = ansi_escape.sub("", traceback)
-                            lines[i] += "{}\n{}\n{}\n".format(
+                            lines[i] += "\n{}\n{}{}".format(
                                 begin,
                                 traceback,
                                 end
@@ -4080,8 +4080,8 @@ justified,
             Admon = admon.upper()[0] + admon[1:]
 
             # Figure files are copied when necessary
+            graphics_colors1 = r'\includegraphics[height=0.52in]{latex_figs/%s}\ \ \ ' % get_admon_figname('colors1', admon)
 
-            graphics_colors1 = r'\includegraphics[height=0.3in]{latex_figs/%s}\ \ \ ' % get_admon_figname('colors1', admon)
             graphics_colors2 = r"""\begin{wrapfigure}{l}{0.07\textwidth}
 \vspace{-13pt}
 \includegraphics[width=0.07\textwidth]{latex_figs/%s}

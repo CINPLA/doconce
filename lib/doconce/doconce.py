@@ -742,10 +742,10 @@ def syntax_check(filestr, format):
     pattern = r'[A-Za-z]`[A-Za-z]'
     m = re.search(pattern, filestr)
     if m:
-        errwarn('*** error: backtick ` in the middle of text is probably syntax error')
+        errwarn('*** warning: backtick ` in the middle of text is probably syntax error')
         errwarn('    surrounding text:')
         errwarn(filestr[m.start()-50:m.start()+50])
-        _abort()
+        # _abort()
 
     begin_end_consistency_checks(filestr, doconce_envirs())
 
@@ -3170,6 +3170,28 @@ be loss of quality. Generate a proper %s file (if possible).""" %
     return filestr
 
 
+def handle_refaux(filestr, format):
+    refaux = 'refaux{' in filestr
+
+    from .latex import aux_label2number
+    label2number = aux_label2number()
+
+    if format not in ('latex', 'pdflatex') and refaux and not label2number:
+        errwarn('*** error: used refaux{} reference(s), but no option --replace_ref_by_latex_auxno=')
+        _abort()
+    # If there is one refaux{...} in the document, only refaux{...}
+    # references get replaced by label2number info
+    if label2number:
+        for label in label2number:
+            no = label2number[label]
+            if refaux:
+                filestr = re.sub(r'refaux\{%s\}' % label, no, filestr)
+            # else:
+            #     filestr = re.sub(r'ref\{%s\}' % label, no, filestr)
+
+    return filestr
+
+
 def handle_cross_referencing(filestr, format, tex_blocks):
     # 1. find all section/chapter titles and corresponding labels
     section_pattern = r'^\s*(={3,9})(.+?)(={3,9})\s*label\{(.+?)\}'
@@ -3217,21 +3239,23 @@ def handle_cross_referencing(filestr, format, tex_blocks):
             filestr = pattern.sub('', filestr)
 
     # 3. Replace ref by hardcoded numbers from a latex .aux file
-    refaux = 'refaux{' in filestr
-    from .latex import aux_label2number
-    label2number = aux_label2number()
-    if format not in ('latex', 'pdflatex') and refaux and not label2number:
-        errwarn('*** error: used refaux{} reference(s), but no option --replace_ref_by_latex_auxno=')
-        _abort()
-    # If there is one refaux{...} in the document, only refaux{...}
-    # references get replaced by label2number info
-    if label2number:
-        for label in label2number:
-            no = label2number[label]
-            if refaux:
-                filestr = re.sub(r'refaux\{%s\}' % label, no, filestr)
-            else:
-                filestr = re.sub(r'ref\{%s\}' % label, no, filestr)
+    # refaux = 'refaux{' in filestr
+    # from .latex import aux_label2number
+    # label2number = aux_label2number()
+    # if format not in ('latex', 'pdflatex') and refaux and not label2number:
+    #     errwarn('*** error: used refaux{} reference(s), but no option --replace_ref_by_latex_auxno=')
+    #     _abort()
+    # # If there is one refaux{...} in the document, only refaux{...}
+    # # references get replaced by label2number info
+    # if label2number:
+    #     for label in label2number:
+    #         no = label2number[label]
+    #         if refaux:
+    #             filestr = re.sub(r'refaux\{%s\}' % label, no, filestr)
+    #         else:
+    #             filestr = re.sub(r'ref\{%s\}' % label, no, filestr)
+
+    filestr = handle_refaux(filestr, format)
 
     # 4. Handle references that can be internal or external
     #    (generalized references) ref[internal][cite][external-HTML]
@@ -4780,6 +4804,10 @@ def doconce2format(filestr, format):
                            tex_blocks, format)
     filestr += '\n'
 
+    # filestr = handle_cross_referencing(filestr, format, tex_blocks)
+    # Working here
+
+
     report_progress('insertion of verbatim and latex blocks')
 
     debugpr('The file after inserting intro/outro and tex/code blocks, and fixing last format-specific issues:', filestr)
@@ -5041,6 +5069,33 @@ the preprocess program to be installed (see code.google.com/p/preprocess).
 On Debian systems, preprocess can be installed through the
 preprocess package (sudo apt-get install preprocess).
 """ % filename)
+            _abort()
+        def version_compare(a, b):
+            """
+            a < b: return -1
+            a == b: return 0
+            a > b: return 1
+            """
+            a_parts = [int(p) for p in a.split('.')]
+            b_parts = [int(p) for p in b.split('.')]
+            max_parts = max(len(a_parts), len(b_parts))
+            for i in range(max_parts):
+                if len(a_parts) <= i:
+                    # b must be newer
+                    return -1
+                elif len(b_parts) <= i:
+                    # a must be newer
+                    return 1
+                elif a_parts[i] < b_parts[i]:
+                    return -1
+                elif a_parts[i] > b_parts[i]:
+                    return 1
+            return 0
+        required_preprocess_version = '1.2.2'
+        if version_compare(preprocess.__version__, required_preprocess_version) == -1:
+            errwarn("ERROR: DocOnce requires preprocess >= 1.2.2")
+            errwarn("Install a newer version with:\n"
+                    + "sudo pip install -U git+https://github.com/doconce/preprocess#egg=preprocess")
             _abort()
 
         if option('no_preprocess'):

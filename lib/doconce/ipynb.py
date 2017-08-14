@@ -9,7 +9,6 @@ from .pandoc import pandoc_ref_and_label, pandoc_index_bib, pandoc_quote, \
      language2pandoc, pandoc_quiz
 from .misc import option, _abort
 from .doconce import errwarn
-from . import execution
 
 # Global variables
 figure_encountered = False
@@ -254,6 +253,8 @@ def ipynb_code(filestr, code_blocks, code_block_types,
     if newcommands:
         filestr = newcommands + filestr
     """
+    if option("execute"):
+        from . import execution
     # Fix pandoc citations to normal internal links: [[key]](#key)
     filestr = re.sub(r'\[@(.+?)\]', r'[[\g<1>]](#\g<1>)', filestr)
 
@@ -638,12 +639,12 @@ def ipynb_code(filestr, code_blocks, code_block_types,
                     if nb_version == 3:
                         nb.cells.append(new_code_cell(
                             input=block_,
-                            prompt_number=prompt_number,
+                            # prompt_number=prompt_number,
                             collapsed=False))
                     elif nb_version == 4:
                         cell = new_code_cell(
                             source=block_,
-                            execution_count=prompt_number,
+                            # execution_count=prompt_number,
                             metadata=dict(collapsed=False)
                         )
                         cells.append(cell)
@@ -864,15 +865,16 @@ def ipynb_index_bib_latex_plain(filestr, index, citations, pubfile, pubdata):
         bibtext = bibliography(pubdata, citations, format='doconce')
         filestr = re.sub(r'^BIBFILE:.+$', bibtext, filestr, flags=re.MULTILINE)
 
-    # Save idx{} and label{} as metadata, also have labels as div tags
-    filestr = re.sub(r'(idx\{.+?\})', r'<!-- dom:\g<1> -->', filestr)
-    # filestr = re.sub(r'(label\{(.+?)\})', r'<!-- dom:\g<1> --><div id="\g<2>"></div>', filestr)
-    filestr = re.sub(r'label\{(.+?)\}', '<div id="\g<1>"></div>', filestr)
+    # remove all index entries (could also place them
+    # in special comments to keep the information)
 
-    # Also treat special cell delimiter comments that might appear from
-    # doconce ipynb2doconce conversions
-    filestr = re.sub(r'^# ---------- (markdown|code) cell$', '',
-                     filestr, flags=re.MULTILINE)
+    filestr = re.sub(r'idx\{.+?\}' + '\n?', '', filestr)
+
+    # Use HTML anchors for labels and [link text](#label) for references
+    # outside mathematics.
+    #filestr = re.sub(r'label\{(.+?)\}', '<a name="\g<1>"></a>', filestr)
+    # Note: HTML5 should have <sometag id="..."></sometag> instead
+    filestr = re.sub(r'label\{(.+?)\}', '<div id="\g<1>"></div>', filestr)
 
     return filestr
 
@@ -910,13 +912,16 @@ def ipynb_ref_and_label(section_label2title, format, filestr):
     pattern = r'([Ff]igure|[Mm]ovie)\s+ref\{(.+?)\}'
     for m in re.finditer(pattern, filestr):
         label = m.group(2).strip()
-        figure_number = figure_labels[label]
-        replace_pattern = r'([Ff]igure|[Mm]ovie)\s+ref\{' + label + r'\}'
-        replace_string = '[\g<1> {figure_number}](#{label})'.format(
+        try:
+            figure_number = figure_labels[label]
+            replace_pattern = r'([Ff]igure|[Mm]ovie)\s+ref\{' + label + r'\}'
+            replace_string = '[\g<1> {figure_number}](#{label})'.format(
             figure_number=figure_number,
             label=label
-        )
-        filestr = re.sub(replace_pattern, replace_string, filestr)
+            )
+            filestr = re.sub(replace_pattern, replace_string, filestr)
+        except KeyError:
+            errwarn("*** warning: Missing figure label '{}'".format(label))
 
     # Remaining ref{} (should protect \eqref)
     filestr = re.sub(r'ref\{(.+?)\}', '[\g<1>](#\g<1>)', filestr)
