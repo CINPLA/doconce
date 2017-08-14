@@ -17,8 +17,8 @@ import os, sys, glob, gzip, tempfile
 # Make sure we import from doconce in this package, not an installed one:
 # (need this for extracting the version below)
 sys.path.insert(0, os.path.join('lib'))
-#import doconce
-__version__ = '1.4.2'
+
+__version__ = '1.4.3'
 
 man_filename = os.path.join("doc", "man", "man1", "doconce.1")
 if "install" in sys.argv:
@@ -49,13 +49,32 @@ if "install" in sys.argv:
 setup(
     version = __version__,
     author = "Hans Petter Langtangen",
-    author_email = "<hpl@simula.no>",
+    author_email = "hpl@simula.no",
     maintainer = "Kristian Gregorius Hustad",
-    maintainer_email = "<krihus@ifi.uio.no>",
+    maintainer_email = "krihus@ifi.uio.no",
     description = __doc__,
     license = "BSD",
     name = "DocOnce",
     url = "https://github.com/hplgit/doconce",
+    classifiers = [
+        'Development Status :: 5 - Production/Stable',
+        'Intended Audience :: Developers',
+        'Intended Audience :: Education',
+        'Intended Audience :: Other Audience',
+        'Intended Audience :: Science/Research',
+        'License :: OSI Approved :: BSD License',
+        'Operating System :: MacOS',
+        'Operating System :: Microsoft :: Windows',
+        'Operating System :: POSIX',
+        'Operating System :: Unix',
+        'Programming Language :: Python',
+        'Topic :: Documentation',
+        'Topic :: Software Development :: Documentation',
+        'Topic :: Text Processing :: Markup',
+        'Topic :: Text Processing :: Markup :: HTML',
+        'Topic :: Text Processing :: Markup :: LaTeX',
+        'Topic :: Text Processing :: Markup :: XML',
+    ],
     package_dir = {'': 'lib'},
     packages = ['doconce'],
     # list individual modules if not all files are wanted as part
