@@ -626,6 +626,7 @@ def ipynb_code(filestr, code_blocks, code_block_types,
                 if option('ipynb_non_editable_text'):
                     cells.append(new_markdown_cell(source=block, metadata=dict(editable=False)))
                 else:
+                    block = re.sub(r"caption\{(.*)\}", r"*Figure: \1*", block)
                     cells.append(new_markdown_cell(source=block))
             mdstr.append(('markdown', block))
         elif block_tp == "execute_hidden" and option("execute"):
@@ -890,8 +891,6 @@ def ipynb_index_bib_latex_plain(filestr, index, citations, pubfile, pubdata):
 
 
 def ipynb_ref_and_label(section_label2title, format, filestr):
-    # TODO: comments should have been removed before we get here!
-    filestr = re.sub(r'^#.+', '', filestr, flags=re.MULTILINE)
     filestr = fix_ref_section_chapter(filestr, format)
 
     # Replace all references to sections. Pandoc needs a coding of
