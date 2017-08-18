@@ -4345,7 +4345,7 @@ justified,
 {\color{seccolor}\thesubsection}{1em}{}
 \titleformat{name=\paragraph}[runin]
 {\color{seccolor}\normalfont\normalsize\sffamily\bfseries}
-{}{}{\indent}
+{}{}{}
 """
         if option('latex_fancy_header'):
             INTRO['latex'] += r"""

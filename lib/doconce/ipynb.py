@@ -645,11 +645,18 @@ def ipynb_code(filestr, code_blocks, code_block_types,
                             # prompt_number=prompt_number,
                             collapsed=False))
                     elif nb_version == 4:
-                        cell = new_code_cell(
-                            source=block_,
-                            # execution_count=prompt_number,
-                            metadata=dict(collapsed=False)
-                        )
+                        if option('ipynb_non_editable_code'):
+                            cell = new_code_cell(
+                                source=block_,
+                                # execution_count=prompt_number,
+                                metadata=dict(collapsed=False, editable=False)
+                            )
+                        else:
+                            cell = new_code_cell(
+                                source=block_,
+                                # execution_count=prompt_number,
+                                metadata=dict(collapsed=False)
+                            )
                         cells.append(cell)
                         if option("execute"):
                             outputs, execution_count = execution.run_cell(kernel_client, block_)
