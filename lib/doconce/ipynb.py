@@ -626,6 +626,7 @@ def ipynb_code(filestr, code_blocks, code_block_types,
                 if option('ipynb_non_editable_text'):
                     cells.append(new_markdown_cell(source=block, metadata=dict(editable=False)))
                 else:
+                    block = re.sub(r"caption\{(.*)\}", r"*Figure*: \1", block)
                     cells.append(new_markdown_cell(source=block))
             mdstr.append(('markdown', block))
         elif block_tp == "execute_hidden" and option("execute"):
