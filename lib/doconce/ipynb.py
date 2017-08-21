@@ -620,13 +620,13 @@ def ipynb_code(filestr, code_blocks, code_block_types,
 
     for block_tp, block in notebook_blocks:
         if (block_tp == 'text' or block_tp == 'math') and block != '' and block != '<!--  -->':
+            block = re.sub(r"caption\{(.*)\}", r"*Figure: \1*", block)
             if nb_version == 3:
                 nb.cells.append(new_text_cell(u'markdown', source=block))
             elif nb_version == 4:
                 if option('ipynb_non_editable_text'):
                     cells.append(new_markdown_cell(source=block, metadata=dict(editable=False)))
                 else:
-                    block = re.sub(r"caption\{(.*)\}", r"*Figure: \1*", block)
                     cells.append(new_markdown_cell(source=block))
             mdstr.append(('markdown', block))
         elif block_tp == "execute_hidden" and option("execute"):
