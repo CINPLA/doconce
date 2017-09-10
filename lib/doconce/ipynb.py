@@ -600,12 +600,12 @@ def ipynb_code(filestr, code_blocks, code_block_types,
     elif nb_version == 4:
         try:
             from nbformat.v4 import (
-                new_code_cell, new_markdown_cell, new_notebook)
+                new_code_cell, new_markdown_cell, new_notebook, new_output)
         except ImportError:
             # Try old style
             try:
                 from IPython.nbformat.v4 import (
-                    new_code_cell, new_markdown_cell, new_notebook)
+                    new_code_cell, new_markdown_cell, new_notebook, new_output)
             except ImportError:
                 errwarn('*** error: cannot do import nbformat.v4 or IPython.nbformat.v4')
                 errwarn('    make sure IPython notebook or Jupyter is installed correctly')
@@ -672,16 +672,15 @@ def ipynb_code(filestr, code_blocks, code_block_types,
                 print("WARNING: Output not implemented for nbformat v3.")
             elif nb_version == 4:
                 outputs = [
-                    {
-                        "data": {
+                    new_output(
+                        output_type="execute_result",
+                        data={
                             "text/plain": [
                                 block
                             ]
                         },
-                        "execution_count": prompt_number-1,
-                        "metadata": {},
-                        "output_type": "execute_result"
-                    }
+                        execution_count=prompt_number-1
+                    )
                 ]
                 previous_cell = cells[-1]
                 if previous_cell.cell_type == "code":
