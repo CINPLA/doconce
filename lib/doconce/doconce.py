@@ -2122,7 +2122,7 @@ def process_envir(filestr, envir, format, action='remove', reason=''):
                         nb_dict['cells'].pop(i)
                         continue
                     cell = nb_dict['cells'][i]
-                    cell_lines = cell['source'].splitlines()
+                    cell_lines = cell['source'].split('\n')
                     cell_lines.pop(j)
                     cell['source'] = '\n'.join(cell_lines)
                     if len(cell_lines) == 0:
